@@ -52,4 +52,17 @@ export class AuthService {
             throw error;
         }
     }
+
+    async udpateROle(email: string) {
+        try {
+            const response = await lastValueFrom(
+                this.authClient.send('auth.updateRole', email)
+            );
+
+            return response;
+        } catch (error) {
+            console.error(`Error from Auth Microservice:`, error.message);
+            throw error;
+        }
+    }
 }

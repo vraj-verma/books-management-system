@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { SharedModule } from '../../../../libs/shared/src';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { SharedJwtModule } from '../../../../libs/shared-jwt/src';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { SharedJwtModule } from '../../../../libs/shared-jwt/src';
         }
       }
     ]),
-    SharedJwtModule
+    SharedModule
 
   ],
   controllers: [AuthController],

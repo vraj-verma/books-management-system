@@ -86,7 +86,7 @@ export class AuthController {
     user.password = undefined;
 
     return {
-      user, 
+      user,
       token
     };
 
@@ -111,5 +111,25 @@ export class AuthController {
 
   }
 
+
+
+
+  @MessagePattern('auth.updateRole')
+  async updateRole(
+    @Payload() email: string
+  ) {
+
+    const response = await this.authService.updateByRoleToAdmin(email);
+
+    if (!response) {
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Failed to change your role`
+      });
+    }
+
+    return response;
+
+  }
 
 }

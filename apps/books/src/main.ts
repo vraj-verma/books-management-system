@@ -13,7 +13,7 @@ async function bootstrap() {
     }
   );
 
-  console.info(`Auth Server is running on 4001`);
+  console.info(`Books Server is running on 4001`);
 
   await app.listen();
 }

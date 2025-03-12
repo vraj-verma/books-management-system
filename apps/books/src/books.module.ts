@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
-import { BooksController } from './books.controller';
 import { BooksService } from './books.service';
-import { SharedDatabaseModule } from '../../../libs/shared-database/src';
-import { SharedJwtModule } from '../../../libs/shared-jwt/src';
+import { BooksController } from './books.controller';
+import { SharedModule } from '../../../libs/shared/src';
+
 
 @Module({
   imports: [
-    SharedDatabaseModule,
-    SharedJwtModule
+    SharedModule,
   ],
   controllers: [BooksController],
   providers: [BooksService],

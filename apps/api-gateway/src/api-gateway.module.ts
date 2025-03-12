@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ApiGatewayController } from './api-gateway.controller';
-import { ApiGatewayService } from './api-gateway.service';
 import { AuthModule } from './auth/auth.module';
 import { BooksModule } from './books/books.module';
+import { SharedModule } from '../../../libs/shared/src';
+import { ApiGatewayService } from './api-gateway.service';
+import { ApiGatewayController } from './api-gateway.controller';
 import { BorrowReturnBooksModule } from './borrow-return-books/borrow-return-books.module';
-import { SharedJwtModule } from '../../../libs/shared-jwt/src';
 
 @Module({
   imports: [
     AuthModule,
     BooksModule,
     BorrowReturnBooksModule,
-    SharedJwtModule
+    SharedModule
   ],
   controllers: [ApiGatewayController],
   providers: [ApiGatewayService],
+  exports: [SharedModule]
 })
 export class ApiGatewayModule { }

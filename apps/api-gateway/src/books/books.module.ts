@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { BooksController } from './books.controller';
+import { SharedModule } from '../../../../libs/shared/src';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { SharedJwtModule } from '../../../../libs/shared-jwt/src';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { SharedJwtModule } from '../../../../libs/shared-jwt/src';
         }
       ]
     ),
-    SharedJwtModule
+    SharedModule
   ],
   controllers: [BooksController],
   providers: [BooksService],
