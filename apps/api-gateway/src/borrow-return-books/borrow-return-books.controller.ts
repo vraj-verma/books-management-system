@@ -1,7 +1,7 @@
 import { Body, Controller, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { BorrowReturnBooksService } from './borrow-return-books.service';
 import { Request, Response } from 'express';
-import { BorrowBook } from '../../../borrow-return-books/src/dto/borrow-return-book.dto';
+import { BorrowBook, ReturnBook } from '../../../borrow-return-books/src/dto/borrow-return-book.dto';
 import { JwtAuthGuard } from '../../../../libs/shared/src/guards/jwt/jwt.guard';
 import { AuthUser } from '../../../../libs/shared/src';
 
@@ -31,7 +31,7 @@ export class BorrowReturnBooksController {
 
       return res.status(201).json({
         status: true,
-        response: `Book with id: ${payload.bookId} borrowed successfully`
+        response: `Book borrowed successfully`
       })
 
     } catch (error) {
@@ -56,7 +56,7 @@ export class BorrowReturnBooksController {
     @Res() res: Response,
     @Req() req: Request,
     @Param('id') bookId: string,
-    @Body() payload: BorrowBook
+    @Body() payload: ReturnBook
   ) {
 
     try {
@@ -70,7 +70,7 @@ export class BorrowReturnBooksController {
 
       return res.status(201).json({
         status: true,
-        response: `Book with id: ${payload.bookId} returned successfully`
+        response: `Book with id: ${bookId} returned successfully`
       })
 
     } catch (error) {

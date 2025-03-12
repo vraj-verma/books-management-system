@@ -1,7 +1,7 @@
-import { Body, Controller, Get, HttpStatus, Res } from '@nestjs/common';
+import { Controller, HttpStatus } from '@nestjs/common';
 import { BorrowReturnBooksService } from './borrow-return-books.service';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
-import { BorrowBook } from './dto/borrow-return-book.dto';
+import { BorrowBook, ReturnBook } from './dto/borrow-return-book.dto';
 
 @Controller()
 export class BorrowReturnBooksController {
@@ -9,6 +9,7 @@ export class BorrowReturnBooksController {
   constructor(
     private readonly borrowReturnBooksService: BorrowReturnBooksService
   ) { }
+
 
 
   @MessagePattern('books.borrow')
@@ -27,37 +28,47 @@ export class BorrowReturnBooksController {
       );
     }
 
-    const response = await this.borrowReturnBooksService.borrowBook(payload);
 
-    if (!response) {
-      throw new RpcException(
-        {
-          statusCode: HttpStatus.NOT_IMPLEMENTED,
-          message: `failed to borrow the book`
-        }
-      );
+    const result = await this.borrowReturnBooksService.borrowAnotherBook(payload);
+
+    if (result) return result;
+
+    const isFirstTimeBorrow = await this.borrowReturnBooksService.isFirstTimeBorrow(payload.userId);
+
+    if (!isFirstTimeBorrow) {
+
+      const response = await this.borrowReturnBooksService.borrowBook(payload);
+
+      if (!response) {
+        throw new RpcException(
+          {
+            statusCode: HttpStatus.NOT_IMPLEMENTED,
+            message: `failed to borrow the book`
+          }
+        );
+      }
     }
 
-    return response;
+    return { message: 'Book(s) borrowed successfully' };
 
   }
 
 
   @MessagePattern('books.return')
   async returnBook(
-    @Payload() payload: BorrowBook
+    @Payload() payload: ReturnBook
   ) {
 
-    // const isAlreadyBorrowed = await this.borrowReturnBooksService.isAlreadyBorrowed(payload);
+    const isAlreadyReturned = await this.borrowReturnBooksService.isAlreadyReturnedBook(payload);
 
-    // if (isAlreadyBorrowed) {
-    //   throw new RpcException(
-    //     {
-    //       statusCode: HttpStatus.CONFLICT,
-    //       message: `Already Borrowed`
-    //     }
-    //   );
-    // }
+    if (isAlreadyReturned) {
+      throw new RpcException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: `Already Returned`
+        }
+      );
+    }
 
     const response = await this.borrowReturnBooksService.returnBook(payload);
 
@@ -65,7 +76,7 @@ export class BorrowReturnBooksController {
       throw new RpcException(
         {
           statusCode: HttpStatus.NOT_IMPLEMENTED,
-          message: `failed to returned the book`
+          message: `Either does not exists or deleted`
         }
       );
     }

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { BorrowBook } from '../../../borrow-return-books/src/dto/borrow-return-book.dto';
+import { BorrowBook, ReturnBook } from '../../../borrow-return-books/src/dto/borrow-return-book.dto';
 
 @Injectable()
 export class BorrowReturnBooksService {
@@ -24,7 +24,7 @@ export class BorrowReturnBooksService {
     }
 
 
-    async returnBook(payload: BorrowBook) {
+    async returnBook(payload: ReturnBook) {
         try {
             return await lastValueFrom(
                 this.borrowReturnClient.send('books.return', payload)
