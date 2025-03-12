@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { BorrowReturnBooksController } from './borrow-return-books.controller';
 import { BorrowReturnBooksService } from './borrow-return-books.service';
-import { SharedDatabaseModule } from '../../../libs/shared-database/src/shared.module';
+import { SharedModule } from '../../../libs/shared/src';
 
 
 @Module({
-  imports: [SharedDatabaseModule],
+  imports: [SharedModule],
   controllers: [BorrowReturnBooksController],
   providers: [BorrowReturnBooksService],
 })

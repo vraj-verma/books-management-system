@@ -13,7 +13,7 @@ async function bootstrap() {
     }
   );
 
-  console.info(`Auth Server is running on 5001`);
+  console.info(`Book Summary Server is running on 5001`);
 
   await app.listen();
 }
