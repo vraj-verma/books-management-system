@@ -65,6 +65,22 @@ export class BooksService {
     }
 
 
+    
+
+    // async GetBookBySearchMessage(payload: { title?: string, author?: string }) {
+    //     try {
+    //         const response = await lastValueFrom(
+    //             this.booksClient.send('books.getBookBySearch', payload)
+    //         );
+    //         return response;
+    //     } catch (error) {
+    //         console.error(`Error from Boooks Microservice:`, error.message);
+    //         throw error;
+    //     }
+    // }
+
+
+
 
     async deleteBookByIdMessage(bookId: string) {
         try {

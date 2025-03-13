@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { BookDetail } from "../../../../libs/shared/src/schema/books-summary.schema";
 
 export class BorrowBook {
@@ -7,5 +8,5 @@ export class BorrowBook {
 
 export class ReturnBook {
     userId: string;
-    bookId: string;
+    bookId: mongoose.Schema.Types.ObjectId;
 }

@@ -6,10 +6,8 @@ export class BookDetail {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Book' })
     bookId: mongoose.Schema.Types.ObjectId;
 
-    @Prop({ type: Date, default: new Date().toISOString()  })
     borrowedAt: Date;
 
-    @Prop({ type: Date, default: null })
     returnedAt: Date;
 }
 
@@ -32,8 +30,19 @@ export class BooksSummary {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     userId: mongoose.Schema.Types.ObjectId;
 
-    @Prop({ type: [BookDetail], default: [] })
-    books: BookDetail[];
+    @Prop({
+        type: [{
+            bookId: { type: mongoose.Schema.Types.ObjectId, ref: 'Book' },
+            borrowedAt: { type: Date, default: new Date().toISOString() },
+            returnedAt: { type: Date, default: null }
+        }], default: []
+    })
+    books: Array<{
+        bookId: mongoose.Schema.Types.ObjectId;
+        borrowedAt: Date;
+        returnedAt: Date | null;
+    }>;
 }
 
 export const BooksSummarySchema = SchemaFactory.createForClass(BooksSummary);
+

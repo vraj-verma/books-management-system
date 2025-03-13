@@ -36,4 +36,32 @@ export class BorrowReturnBooksService {
         }
     }
 
+
+    async borrowedBooksByUser(payload: string) {
+        try {
+            
+            return await lastValueFrom(
+                this.borrowReturnClient.send('books.borrowedByUser', payload)
+            );
+
+        } catch (error) {
+            console.error(`Error from Book Summary Microservice:`, error.message);
+            throw error;
+        }
+    }
+
+
+    async mostBorrowedBook() {
+        try {
+            
+            return await lastValueFrom(
+                this.borrowReturnClient.send('books.mostBorrowedBook', {})
+            );
+
+        } catch (error) {
+            console.error(`Error from Book Summary Microservice:`, error.message);
+            throw error;
+        }
+    }
+
 }

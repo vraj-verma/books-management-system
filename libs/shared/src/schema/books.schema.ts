@@ -30,6 +30,12 @@ export class Book {
     @Prop()
     notes: string;
 
+    @Prop({ default: false })
+    isBorrowed: boolean;
+
+    @Prop({ default: 0 })
+    borrowedCount: number;
+
 }
 
 export const BooksSchema = SchemaFactory.createForClass(Book);

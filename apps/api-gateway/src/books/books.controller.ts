@@ -45,8 +45,6 @@ export class BooksController {
 
 
 
-
-  @UseGuards(JwtAuthGuard)
   @Get('list')
   async getBooks(
     @Res() res: Response,
@@ -72,7 +70,6 @@ export class BooksController {
     }
 
   }
-
 
 
   @UseGuards(JwtAuthGuard)
@@ -107,7 +104,6 @@ export class BooksController {
 
 
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getBookBySearch(
     @Res() res: Response,

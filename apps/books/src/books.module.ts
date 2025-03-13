@@ -10,5 +10,6 @@ import { SharedModule } from '../../../libs/shared/src';
   ],
   controllers: [BooksController],
   providers: [BooksService],
+  exports: [BooksService],
 })
 export class BooksModule { }

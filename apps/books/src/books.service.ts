@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Book } from '../../../libs/shared/src/schema/books.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
 import { BooksDTO } from './dto/books.dto';
 import { Paged } from './types/pagination.type';
 
@@ -107,6 +107,48 @@ export class BooksService {
     }
   }
 
+  async getBookByById(bookId: mongoose.Schema.Types.ObjectId[]): Promise<Book[]> {
+    try {
+
+      const filter = { _id: { $in: bookId }, isBorrowed: true }
+
+      const response = await this.bookModel.find(filter);
+
+      return response && response.length > 0 ? response as Book[] : null;
+    } catch (error) {
+      console.error(`Something went wrong at database end`, error.message);
+      return null;
+    }
+  }
+
+
+
+
+  async updateBookStatus(bookIds: mongoose.Schema.Types.ObjectId[], status: boolean): Promise<boolean> {
+    try {
+
+      const response = await this.bookModel.updateMany(
+        {
+          _id: bookIds
+        },
+        {
+          $set: {
+            isBorrowed: status,
+          },
+          $inc: {
+            borrowedCount: status ? 1 : 0
+          }
+        },
+
+      );
+
+      return response ? response.modifiedCount > 0 : false;
+    } catch (error) {
+      console.error(`Something went wrong at database end`, error.message);
+      return null;
+    }
+  }
+
   async deleteBook(bookId: string): Promise<boolean> {
     try {
 
@@ -115,6 +157,38 @@ export class BooksService {
       const response = await this.bookModel.deleteOne(filter);
 
       return response ? response.deletedCount > 0 : null;
+    } catch (error) {
+      console.error(`Something went wrong at database end`, error.message);
+      return null;
+    }
+  }
+
+
+  async mostFrequentlyBorrowBook() {
+    try {
+      const [response] = await this.bookModel.aggregate(
+
+        [
+          {
+            $group: {
+              _id: null,
+              title: { $first: "$title" },
+              mostFrequently: {
+                $max: "$borrowedCount"
+              }
+            }
+          },
+          {
+            $project: {
+              title: 1,
+              mostFrequently: 1,
+              _id: 0
+            }
+          }
+        ]
+      );
+
+      return response ? response : [];
     } catch (error) {
       console.error(`Something went wrong at database end`, error.message);
       return null;

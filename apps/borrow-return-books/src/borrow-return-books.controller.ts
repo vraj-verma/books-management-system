@@ -2,11 +2,14 @@ import { Controller, HttpStatus } from '@nestjs/common';
 import { BorrowReturnBooksService } from './borrow-return-books.service';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { BorrowBook, ReturnBook } from './dto/borrow-return-book.dto';
+import { BooksService } from '../../books/src/books.service';
+import mongoose from 'mongoose';
 
 @Controller()
 export class BorrowReturnBooksController {
 
   constructor(
+    private readonly booksService: BooksService,
     private readonly borrowReturnBooksService: BorrowReturnBooksService
   ) { }
 
@@ -17,9 +20,11 @@ export class BorrowReturnBooksController {
     @Payload() payload: BorrowBook
   ) {
 
-    const isAlreadyBorrowed = await this.borrowReturnBooksService.isAlreadyBorrowed(payload);
+    const bookIds = payload.books.map(x => x.bookId);
 
-    if (isAlreadyBorrowed) {
+    const isAlreadyBorrowedByUser = await this.borrowReturnBooksService.isAlreadyBorrowed(payload);
+
+    if (isAlreadyBorrowedByUser) {
       throw new RpcException(
         {
           statusCode: HttpStatus.CONFLICT,
@@ -27,11 +32,28 @@ export class BorrowReturnBooksController {
         }
       );
     }
+    
+
+    const isAlreadyBorrowedByAnotherUser = await this.booksService.getBookByById(bookIds);
+
+    if (isAlreadyBorrowedByAnotherUser) {
+      throw new RpcException(
+        {
+          statusCode: HttpStatus.CONFLICT,
+          message: `Already Borrowed by another user`
+        }
+      );
+    }
 
 
     const result = await this.borrowReturnBooksService.borrowAnotherBook(payload);
 
-    if (result) return result;
+    if (result) {
+
+      await this.booksService.updateBookStatus(bookIds, true);
+
+      return result;
+    };
 
     const isFirstTimeBorrow = await this.borrowReturnBooksService.isFirstTimeBorrow(payload.userId);
 
@@ -47,6 +69,9 @@ export class BorrowReturnBooksController {
           }
         );
       }
+
+      await this.booksService.updateBookStatus(bookIds, true);
+
     }
 
     return { message: 'Book(s) borrowed successfully' };
@@ -77,6 +102,48 @@ export class BorrowReturnBooksController {
         {
           statusCode: HttpStatus.NOT_IMPLEMENTED,
           message: `Either does not exists or deleted`
+        }
+      );
+    }
+
+    await this.booksService.updateBookStatus([payload.bookId], false);
+
+    return response;
+
+  }
+
+
+  @MessagePattern('books.borrowedByUser')
+  async borrowedBooks(
+    @Payload() email: string
+  ) {
+
+    const response = await this.borrowReturnBooksService.booksBorrowedByUser(email);
+
+    if (!response || response.length < 1) {
+      throw new RpcException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: `No books borrowed.`
+        }
+      );
+    }
+
+    return response;
+
+  }
+
+
+  @MessagePattern('books.mostBorrowedBook')
+  async mostborrowedBooks() {
+
+    const response = await this.booksService.mostFrequentlyBorrowBook();
+
+    if (!response || response.length < 1) {
+      throw new RpcException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: `No Data`
         }
       );
     }
