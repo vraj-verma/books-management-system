@@ -1,12 +1,26 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { BorrowReturnBooksService } from './borrow-return-books.service';
-import { Request, Response } from 'express';
-import { BorrowBook, ReturnBook } from '../../../borrow-return-books/src/dto/borrow-return-book.dto';
-import { JwtAuthGuard } from '../../../../libs/shared/src/guards/jwt/jwt.guard';
-import { AuthUser } from '../../../../libs/shared/src';
+import {
+  Body,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  Controller,
+} from '@nestjs/common';
 import mongoose from 'mongoose';
+import { Request, Response } from 'express';
+import { AuthUser } from '../../../../libs/shared/src';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ValidationPipe } from '../pipes/validation.pipe';
+import { InputValidation } from '../validations/input.validation';
+import { BorrowReturnBooksService } from './borrow-return-books.service';
+import { JwtAuthGuard } from '../../../../libs/shared/src/guards/jwt/jwt.guard';
+import { BorrowBook, ReturnBook } from '../../../borrow-return-books/src/dto/borrow-return-book.dto';
 
-@Controller('borrow-return-books')
+@ApiTags('Book Summary Controller')
+@Controller()
 export class BorrowReturnBooksController {
 
   constructor(
@@ -14,12 +28,13 @@ export class BorrowReturnBooksController {
   ) { }
 
 
+  @ApiOperation({ summary: 'Borrow Book(s)', description: 'Provide Book ID(s) to borrow book(s)' })
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('borrow')
   async borrowBook(
     @Res() res: Response,
     @Req() req: Request,
-    @Body() payload: BorrowBook
+    @Body(new ValidationPipe(InputValidation.borrowBookSchema)) payload: BorrowBook
   ) {
 
     try {
@@ -50,14 +65,14 @@ export class BorrowReturnBooksController {
   }
 
 
-
+  @ApiOperation({ summary: 'Return Book', description: 'Provide Book ID & returned date to return book' })
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
+  @Patch('return/:id')
   async returnBook(
     @Res() res: Response,
     @Req() req: Request,
     @Param('id') bookId: mongoose.Schema.Types.ObjectId,
-    @Body() payload: ReturnBook
+    @Body(new ValidationPipe(InputValidation.returnBookSchema)) payload: ReturnBook
   ) {
 
     try {
@@ -89,9 +104,9 @@ export class BorrowReturnBooksController {
   }
 
 
-
+  @ApiOperation({ summary: 'Get your current borrowed books', description: 'Get the list of all active borrowed book(s)' })
   @UseGuards(JwtAuthGuard)
-  @Get('borrowed')
+  @Get('books-borrowed')
   async booksBorrowed(
     @Res() res: Response,
     @Req() req: Request,
@@ -123,9 +138,9 @@ export class BorrowReturnBooksController {
   }
 
 
-
+  @ApiOperation({ summary: 'Most Frequenty borrow book', description: 'Get the count of most popular book' })
   @UseGuards(JwtAuthGuard)
-  @Get('most-borrowed')
+  @Get('borrow/most-borrowed')
   async mostBorrowedBook(
     @Res() res: Response,
   ) {

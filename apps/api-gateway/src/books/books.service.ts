@@ -1,7 +1,7 @@
+import { lastValueFrom } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { BooksDTO } from '../../../books/src/dto/books.dto';
-import { lastValueFrom } from 'rxjs';
 import { Paged } from '../../../books/src/types/pagination.type';
 
 @Injectable()

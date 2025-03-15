@@ -3,7 +3,7 @@ import { BorrowReturnBooksService } from './borrow-return-books.service';
 import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 import { BorrowBook, ReturnBook } from './dto/borrow-return-book.dto';
 import { BooksService } from '../../books/src/books.service';
-import mongoose from 'mongoose';
+
 
 @Controller()
 export class BorrowReturnBooksController {
@@ -32,7 +32,7 @@ export class BorrowReturnBooksController {
         }
       );
     }
-    
+
 
     const isAlreadyBorrowedByAnotherUser = await this.booksService.getBookByById(bookIds);
 

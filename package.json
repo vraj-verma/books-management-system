@@ -1,8 +1,8 @@
 {
   "name": "books-management-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Book Management System using Microservices architecture in NestJS",
+  "author": "Sumit Verma",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -13,14 +13,15 @@
     "start:auth": "nest start auth --watch",
     "start:books": "nest start books --watch",
     "start:books-summary": "nest start borrow-return-books --watch",
+    "start:all": "npm-run-all --parallel start:dev start:auth start:books start:books-summary",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/apps/books-management-api/main",
+    "start:prod": "node dist/apps/api-gateway/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/books-management-api/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/api-gateway/test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

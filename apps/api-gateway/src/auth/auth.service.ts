@@ -1,6 +1,6 @@
+import { lastValueFrom } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
 import { SignupDTO } from '../../../auth/src/dto/signup,dto';
 import { SigninDTO } from '../../../auth/src/dto/signin.dto';
 

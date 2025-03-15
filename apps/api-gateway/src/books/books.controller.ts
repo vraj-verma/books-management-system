@@ -1,13 +1,26 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
-import { BooksService } from './books.service';
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Res,
+  UseGuards,
+  Controller,
+} from '@nestjs/common';
 import { Response } from 'express';
-import { BooksDTO } from '../../../books/src/dto/books.dto';
-import { JwtAuthGuard } from '../../../../libs/shared/src/guards/jwt/jwt.guard';
-import { Paged } from '../../../books/src/types/pagination.type';
+import { BooksService } from './books.service';
 import { ValidationPipe } from '../pipes/validation.pipe';
+import { BooksDTO } from '../../../books/src/dto/books.dto';
+import { Paged } from '../../../books/src/types/pagination.type';
 import { InputValidation } from '../validations/input.validation';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../../libs/shared/src/guards/jwt/jwt.guard';
 
 
+@ApiTags('Books Controller')
 @Controller('books')
 export class BooksController {
 
@@ -16,11 +29,13 @@ export class BooksController {
   ) { }
 
 
+  @ApiOperation({ summary: 'Add new book', description: 'Add a new book if already not exist' })
+  @ApiResponse({ type: BooksDTO })
   @UseGuards(JwtAuthGuard)
   @Post()
   async addBook(
     @Res() res: Response,
-    @Body() payload: BooksDTO
+    @Body(new ValidationPipe(InputValidation.bookSchema)) payload: BooksDTO
   ) {
 
     try {
@@ -45,6 +60,8 @@ export class BooksController {
 
 
 
+  @ApiOperation({ summary: 'Get Books', description: 'List of all existing books' })
+  @ApiResponse({ type: [BooksDTO] })
   @Get('list')
   async getBooks(
     @Res() res: Response,
@@ -72,12 +89,14 @@ export class BooksController {
   }
 
 
+
+  @ApiOperation({ summary: 'Get Book', description: 'get the book by Book ID' })
   @UseGuards(JwtAuthGuard)
   @Put(':id')
   async updateBookByID(
     @Res() res: Response,
     @Param('id') bookId: string,
-    @Body() payload: BooksDTO
+    @Body(new ValidationPipe(InputValidation.bookSchema)) payload: BooksDTO
   ) {
 
     try {
@@ -104,6 +123,8 @@ export class BooksController {
 
 
 
+  @ApiOperation({ summary: 'Get Book by Search', description: 'Search the book by Title or Author' })
+  @ApiResponse({ type: BooksDTO })
   @Get()
   async getBookBySearch(
     @Res() res: Response,
@@ -133,6 +154,7 @@ export class BooksController {
 
 
 
+  @ApiOperation({ summary: 'Delete Book', description: 'Delete or remove the book by Book ID' })
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteBookById(

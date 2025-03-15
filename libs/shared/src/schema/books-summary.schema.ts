@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import mongoose, { Types } from "mongoose";
 
 export class BookDetail {
@@ -6,8 +7,10 @@ export class BookDetail {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Book' })
     bookId: mongoose.Schema.Types.ObjectId;
 
+    @ApiHideProperty()
     borrowedAt: Date;
 
+    @ApiHideProperty()
     returnedAt: Date;
 }
 

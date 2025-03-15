@@ -22,4 +22,25 @@ export class InputValidation {
     static deleteSchema = joi.object({
         email: joi.string().email().required(),
     });
+
+
+    static bookSchema = joi.object({
+        title: joi.string().min(2).max(50).required(),
+        author: joi.string().min(2).max(20).required(),
+        genre: joi.string().required(),
+        publishedYear: joi.number().required(),
+    });
+
+    static borrowBookSchema = joi.object({
+        books: joi.array().items(
+            {
+                bookId: joi.string().min(24).max(24).required(),
+                borrowedAt: joi.string().required(),
+            }
+        )
+    });
+
+    static returnBookSchema = joi.object({
+        returnedAt: joi.string().required(),
+    });
 }

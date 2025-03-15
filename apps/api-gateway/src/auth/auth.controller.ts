@@ -1,15 +1,27 @@
-import { Body, Controller, Delete, HttpException, HttpStatus, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Patch,
+  Post,
+  Req,
+  Res,
+  Delete,
+  UseGuards,
+  HttpStatus,
+  Controller,
+  HttpException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { AuthUser } from '../../../../libs/shared/src';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../pipes/validation.pipe';
 import { SignupDTO } from '../../../auth/src/dto/signup,dto';
 import { SigninDTO } from '../../../auth/src/dto/signin.dto';
 import { InputValidation } from '../validations/input.validation';
 import { JwtAuthGuard } from '../../../../libs/shared/src/guards/jwt/jwt.guard';
-import { AuthUser } from '../../../../libs/shared/src';
 
 
-
+@ApiTags('Auth Controller')
 @Controller('auth')
 export class AuthController {
 
@@ -18,6 +30,7 @@ export class AuthController {
   ) { }
 
 
+  @ApiOperation({ summary: 'Register Your Account', description: 'Create your account' })
   @Post('signup')
   async registerUser(
     @Res() res: Response,
@@ -51,6 +64,7 @@ export class AuthController {
   }
 
 
+  @ApiOperation({ summary: 'Log in your account', description: 'Login & get JWT token' })
   @Post('signin')
   async signin(
     @Res() res: Response,
@@ -87,6 +101,8 @@ export class AuthController {
   }
 
 
+
+  @ApiOperation({ summary: 'Delete your account', description: 'Remove your account from the platform' })
   @UseGuards(JwtAuthGuard)
   @Delete()
   async delete(
@@ -126,6 +142,8 @@ export class AuthController {
   }
 
 
+
+  @ApiOperation({ summary: 'Change your role to Admin', description: 'If you have the paascode, just simpley becaome Admin' })
   @UseGuards(JwtAuthGuard)
   @Patch('change-role')
   async udpateRole(
@@ -138,7 +156,7 @@ export class AuthController {
 
     if (code !== '2804') {
       throw new HttpException(
-        `Your give code is incorrect, you musthave a valid code to become Admin`,
+        `Your give code is incorrect, you must have a valid code to become Admin`,
         HttpStatus.BAD_REQUEST
       )
     }
