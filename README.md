@@ -69,3 +69,4 @@ Acts as a central entry point for all services and uses TCP connections for comm
 
 4. Access API Gateway at: `http://localhost:7001/api/v1`
 
+
